@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import cors from "@fastify/cors";
+import { StatusCode } from "./utils/status-code";
 
 const server = fastify({ logger: true });
 
@@ -46,13 +47,13 @@ const drivers = [
 
 // Busca todos os teams
 server.get('/teams', async (request, response) => {
-    response.type("application/json").code(200);
+    response.type("application/json").code(StatusCode.OK);
     return { teams }
 })
 
 //Busca todos os drivers
 server.get("/drivers", async (request, response) => {
-    response.type("application/json").code(200);
+    response.type("application/json").code(StatusCode.OK);
     return { drivers }
 })
 
@@ -67,10 +68,10 @@ server.get<{ Params: DriveParams }>("/drivers/:id", async (request, response) =>
     const driver = drivers.find((d) => d.id === Number(id))
 
     if (!driver) {
-        response.type("application/json").code(404);
+        response.type("application/json").code(StatusCode.NOT_FOUND);
         return { message: "Driver not found" }
     } else {
-        response.type("application/json").code(200);
+        response.type("application/json").code(StatusCode.OK);
         return { driver }
     }
 })
@@ -86,10 +87,10 @@ server.get<{ Params: TeamParams }>("/team/:id", async (request, response) => {
     const team = teams.filter((t) => t.id === Number(id))
 
     if (!team) {
-        response.type("application/json").code(404);
+        response.type("application/json").code(StatusCode.NOT_FOUND);
         return { message: "Driver not found" }
     } else {
-        response.type("application/json").code(200);
+        response.type("application/json").code(StatusCode.OK);
         return { team }
     }
 
@@ -106,10 +107,10 @@ server.get<{ Params: DriversByParams }>("/teams/:id/drivers", async (request, re
 
     if (team) {
         const driversByTeam = drivers.filter((d) => d.team === team.name)
-        response.type("application/json").code(200);
+        response.type("application/json").code(StatusCode.OK);
         return { driversByTeam }
     } else {
-        response.type("application/json").code(404);
+        response.type("application/json").code(StatusCode.NOT_FOUND);
         return { message: "Driver not found" }
     }
 
@@ -126,9 +127,10 @@ server.get<{ Params: TeamByParams}>("/drivers/:id/team", async (request, respons
 
     if(driver){
         const teamByDriver = teams.filter((t) => t.name === driver.team)
+        response.type("application/json").code(StatusCode.OK)
         return { teamByDriver }
     } else {
-        response.type("application/json").code(404);
+        response.type("application/json").code(StatusCode.NOT_FOUND);
         return { message: "Team not found" }
     }
 })
