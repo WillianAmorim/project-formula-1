@@ -115,6 +115,24 @@ server.get<{ Params: DriversByParams }>("/teams/:id/drivers", async (request, re
 
 })
 
+//Buscar time por piloto
+interface TeamByParams {
+    id: string;
+}
+
+server.get<{ Params: TeamByParams}>("/drivers/:id/team", async (request, response) => {
+    const { id } = request.params;
+    const driver = drivers.find((d) => d.id === Number(id))
+
+    if(driver){
+        const teamByDriver = teams.filter((t) => t.name === driver.team)
+        return { teamByDriver }
+    } else {
+        response.type("application/json").code(404);
+        return { message: "Team not found" }
+    }
+})
+
 
 server.listen({ port: 3333 }, () => {
     console.log("Server init");
